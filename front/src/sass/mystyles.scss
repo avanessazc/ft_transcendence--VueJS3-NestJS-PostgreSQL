@@ -1,0 +1,100 @@
+@charset "utf-8";
+
+$navbar-background-color: #14141f;
+$button-is-primary-bg-color: #4b50e6;
+$gradient:linear-gradient(150deg, #e250e5 5%, #4b50e6 95%);
+$button-is-primary-hover: #e250e5;
+$input-placeholder-color: #b8b8b8;
+$title-color: #ffffff;
+
+.navbar{
+    background-color:$navbar-background-color;
+}
+.navbar .navbar-brand .navbar-item img{
+    max-height: 3.5rem;
+}
+.button.is-primary {
+    background-image: $gradient;
+}
+
+a.button.is-primary:hover
+{
+    background-image: none;
+    background-color: $button-is-primary-hover;
+}
+
+.navbar-item, .navbar-link
+{
+    color: #b8b8b8 !important;
+}
+
+.navbar-dropdown > a {
+    color: #485fc7;
+}
+
+.footer {
+    background-color: black;
+}
+
+footer > .content  {
+    color: #b8b8b8;
+}
+
+.button.is-primary.is-outlined.custom
+{
+    background-color: transparent;
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.button.is-primary.is-outlined.custom:hover
+{
+    background-image: none;
+    background-color: #e250e5;
+    border-color: #e250e5;
+    color: #ffffff;
+}
+
+.button.is-primary.is-outlined.rounded
+{
+    background-image: none;
+    background-color: transparent;
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.button.is-primary.is-outlined.rounded:hover
+{
+    background-image: none;
+    background-color: #e250e5;
+    border-color: #e250e5;
+    color: #ffffff;
+}
+
+.button.is-primary.is-outlined.rounded:focus
+{
+    background-image: none;
+    background-color: #e250e5;
+    border-color: #e250e5;
+    color: #ffffff;
+}
+
+.control.has-icons-left.input{
+    color: #ffffff;
+}
+
+$color: #e250e5;
+.progress::-webkit-progress-value {
+    background-color: $color !important;
+}
+.progress::-moz-progress-bar {
+    background-color: $color !important;
+}
+  
+.progress::-ms-fill {
+    background-color: $color !important;
+    border: none;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@600');
+@import "../../node_modules/bulma/bulma.sass";

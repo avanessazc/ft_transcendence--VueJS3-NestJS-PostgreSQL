@@ -1,0 +1,74 @@
+{
+  "name": "LavaTranscendence",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "css-build": "node-sass --omit-source-map-url ./src/sass/mystyles.scss ./src/css/mystyles.css",
+    "css-watch": "npm run css-build -- --watch",
+    "start": "npm run css-watch",
+    "css": "npm run css-build"
+  },
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@vuelidate/core": "^2.0.0",
+    "@vuelidate/validators": "^2.0.0",
+    "axios": "^1.0.0",
+    "bootstrap": "^5.2.2",
+    "bulma": "^0.9.4",
+    "dateformat": "^5.0.3",
+    "file-type": "^18.0.0",
+    "fs": "^0.0.1-security",
+    "js-to-ts-converter": "^0.18.2",
+    "mdb-ui-kit": "^5.0.0",
+    "pinia": "^2.0.23",
+    "socket.io-client": "^4.5.3",
+    "vue": "^3.2.13",
+    "vue-axios": "^3.5.0",
+    "vue-picture-input": "^2.4.0",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "@vue/eslint-config-typescript": "^9.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "node-sass": "^7.0.3",
+    "prettier": "^2.4.1",
+    "typescript": "~4.5.5"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended",
+      "@vue/typescript/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}

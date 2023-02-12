@@ -1,0 +1,78 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: postgres_c
+    networks:
+      - internal
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+  vuejs:
+    build: ./front
+    ports:
+     - "8080:8080"
+    container_name: vuejs_c
+    depends_on:
+      - nestjs
+    networks:
+      - internal
+    volumes:
+      - type: bind
+        source: ./front/src
+        target: /usr/src/app/front/src
+      - type: bind
+        source: ./front/public
+        target: /usr/src/app/front/public
+    restart: unless-stopped
+    command: npm run serve
+  nestjs:
+    build: ./back
+    depends_on: 
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    container_name: nestjs_c
+    volumes:
+      - type: bind
+        source: ./back/src
+        target: /usr/src/app/back/src
+      - type: bind
+        source: ./back/files
+        target: /usr/src/app/back/files
+    restart: unless-stopped
+    command: npm run start:dbpush:seeding:dev
+    networks: 
+     - internal
+  dbadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    networks:
+      - internal
+    ports:
+      - 5050:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+networks: 
+  internal:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local

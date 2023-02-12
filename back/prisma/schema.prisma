@@ -1,0 +1,185 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+	id						String			@id @default(uuid())
+	email					String			@unique @db.VarChar(30)
+	nickname				String			@unique @db.VarChar(20)
+	firstname				String?			@db.VarChar(20)
+	surname					String?			@db.VarChar(20)
+	avatar					String?
+	hash					String
+	two_factor_auth_secret	String?
+	two_factor_enabled		Boolean?		@default(false)
+	refresh_token			RefreshTokens[]
+	messages				Messages[]		@relation("MainUser")
+	guest_messages			Messages[]		@relation("GuestMessenger")
+	achievements			AchievementsPerUser[]
+	channels_owner			Channels[]
+	channels				UsersOnChannel[]
+	inviting				Friendships[]	@relation("from_user")
+	invitedBy				Friendships[]	@relation("to_user")
+	sockets					Sockets[]
+	player_inviting			Matches[]		@relation("from_player")
+	player_invitedBy		Matches[]		@relation("to_player")
+	status_id				Int 			@default(1)
+	status					Status			@relation(fields: [status_id], references: [id])
+	InvitingToChannel		PrivateChannelInvitation[]	@relation("from_user")
+	invitedByToChannel		PrivateChannelInvitation[]	@relation("to_user")
+}
+
+model Status {
+	id 						Int		    	@id
+	status_name				String			@unique
+	user 					Users[]
+}
+
+model Sockets {
+	id 						String			@id @default(uuid())
+	socket_id				String			@unique
+	user_id					String?
+	user 					Users?			@relation(fields: [user_id], references: [id])
+}
+
+model RefreshTokens {
+	id 						String			@id @default(uuid())
+	refresh_token 			String
+	userid					String
+	user 					Users			@relation(fields: [userid], references: [id])
+}
+
+model AchievementsPerUser{
+	user_id					String
+	user					Users			@relation(fields: [user_id], references: [id])
+	achievement_id			Int
+	achievement				Achievements	@relation(fields: [achievement_id], references: [id])
+	user_score				Int
+	unlocked				Boolean
+	@@id([user_id, achievement_id])
+}
+
+model Achievements{
+	id						Int				@id
+	title					String 			@unique
+	description				String 			@unique
+	minimum_score			Int
+	users					AchievementsPerUser[]
+}
+
+model Messages{
+	id 						String			@id @default(uuid())
+	content					String
+	created_at				DateTime		@default(now())
+	nickname				String			@db.VarChar(20)
+	user_id					String
+	chan_id					String
+	channel 				Channels		@relation(fields: [chan_id], references: [id])
+	user 					Users			@relation(fields: [user_id], references: [id], name: "MainUser")
+	side					String
+	guest_id				String
+	guest 					Users			@relation(fields: [guest_id], references: [id], name: "GuestMessenger")
+}
+
+model Channels {
+	id						String			@id @default(uuid())
+	user_owner_id			String
+	user_owner				Users			@relation(fields: [user_owner_id], references: [id])
+	type_id					Int 
+	type					ChannelType		@relation(fields:[type_id], references: [id])
+	password				String?
+	title					String			@unique @db.VarChar(12)
+	topic					String?
+	users					UsersOnChannel[]
+	messages				Messages[]
+	private_invitations		PrivateChannelInvitation[]
+}
+
+model ChannelType {
+	id						Int				@id
+	description				String			@unique
+	channels				Channels[]
+}
+
+model UsersOnChannel{
+	user_id					String
+	user					Users			@relation(fields: [user_id], references: [id])
+	channel_id				String
+	channel					Channels		@relation(fields: [channel_id], references: [id])
+	user_mode_id			Int
+	user_mode				UserMode		@relation(fields: [user_mode_id], references: [id])
+	user_role_id			Int
+	user_role				UserRole		@relation(fields: [user_role_id], references: [id])
+	mode_time				Int	
+	mode_date_hour			DateTime?
+	@@id([user_id, channel_id, user_mode_id, user_role_id])
+}
+
+model PrivateChannelInvitation {
+	id						String				@id @default(uuid())
+	from_user_id			String
+	from_user				Users				@relation("from_user", fields: [from_user_id], references: [id])
+	to_user_id				String
+	to_user					Users				@relation("to_user", fields: [to_user_id], references: [id])
+	invitation_status_id	Int 
+	invitation_status		InvitationStatus	@relation(fields:[invitation_status_id], references: [id])
+	channel_id				String
+	channel					Channels			@relation(fields: [channel_id], references: [id])
+}
+
+model UserRole {
+	id						Int				@id
+	description				String			@unique
+	users_On_Channel_role	UsersOnChannel[]
+}
+
+model UserMode {
+	id						Int				@id
+	description				String			@unique
+	users_On_Channel_mode	UsersOnChannel[]
+}
+
+model InvitationStatus {
+	id						Int				@id
+	description				String			@unique
+	friendships_status		Friendships[]
+	match_status			Matches[]
+	private_chan_status		PrivateChannelInvitation[]
+}
+
+model Friendships {
+	id						String				@unique
+	from_user_id			String
+	from_user				Users				@relation("from_user", fields: [from_user_id], references: [id])
+	to_user_id				String
+	to_user					Users				@relation("to_user", fields: [to_user_id], references: [id])
+	invitation_status_id	Int 
+	invitation_status		InvitationStatus	@relation(fields:[invitation_status_id], references: [id])
+}
+
+model Matches {
+	id						String				@id @default(uuid())
+	from_player_id			String
+	from_player				Users				@relation("from_player", fields: [from_player_id], references: [id])
+	to_player_id			String?
+	to_player				Users?				@relation("to_player", fields: [to_player_id], references: [id])
+	invitation_status_id	Int 
+	invitation_status		InvitationStatus	@relation(fields:[invitation_status_id], references: [id])
+	score_from_player		Int					@default(0)
+	score_to_player			Int					@default(0)
+	points					Int					@default(0)
+	winner_id				String?
+	pong_map				Int					@default(1)
+	invitation_date			DateTime			@default(now())
+	start_date				DateTime?
+	end_date				DateTime?
+	game_over				Boolean?			@default(false)
+}
